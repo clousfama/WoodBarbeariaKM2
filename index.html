@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <base href="/" />
+    <title>Wood Barbearia</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        @media (max-width: 767px) {
+            #sidebar {
+                z-index: 40;
+            }
+            .menu-button {
+                display: block;
+            }
+        }
+    </style>
+<script type="text/javascript">
+        (function(){
+            emailjs.init({
+                publicKey: "0OZ38rVRoHX11_UCw",
+                blockHeadless: true,
+                limitRate: {
+                    id: 'app',
+                    throttle: 10000,
+                }
+            });
+        })();
+    </script>
+    <script>
+        async function sendEmailNotification(appointmentData) {
+            const templateParams = {
+                to_name: "Kesley",
+                from_name: appointmentData.name,
+                service: appointmentData.service,
+                date: appointmentData.date,
+                time: appointmentData.time,
+                to_email: "kesleywd25@gmail.com", // Email correto do destinatário
+                reply_to: appointmentData.whatsapp + "@c.us" // Adicionando WhatsApp como reply-to
+            };
+
+            // Verifica se o EmailJS está inicializado
+            if (!emailjs || !emailjs.send) {
+                throw new Error('EmailJS não foi carregado corretamente');
+            }
+
+            // Verifica se as credenciais do serviço estão presentes
+            if (!templateParams.to_email || !templateParams.reply_to) {
+                throw new Error('Parâmetros de email incompletos');
+            }
+
+            try {
+                // Envia o email com timeout de 40 segundos
+                console.log('Parâmetros do e-mail:', templateParams);
+                console.log('Service ID:', 'service_ha16nlq');
+                console.log('Template ID:', 'template_0k95b0o');
+                const response = await Promise.race([
+                    emailjs.send(
+                        'service_ha16nlq', 
+                        'template_0k95b0o', 
+                        templateParams
+                    ).then(response => {
+                        if (response.status !== 200) {
+                            throw new Error(`Erro no envio: ${response.text}`);
+                        }
+                        return response;
+                    }),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Timeout ao enviar email')), 40000)
+                    )
+                ]);
+
+                console.log('Resposta do EmailJS:', response);
+
+                console.log('Email enviado com sucesso:', response);
+                return true;
+            } catch (error) {
+                console.error('Erro detalhado no envio de email:', {
+                    error: error.message,
+                    templateParams,
+                    timestamp: new Date().toISOString()
+                });
+                throw error;
+            }
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Agendando...';
+            
+            try {
+                const formData = {
+                    name: document.querySelector('input[type="text"]').value,
+                    whatsapp: document.querySelector('input[type="tel"]').value,
+                    service: document.getElementById('service').value,
+                    service_text: document.getElementById('service').options[document.getElementById('service').selectedIndex].text,
+                    date: document.getElementById('appointmentDate').value,
+                    time: document.getElementById('timeSlots').value,
+                    formatted_date: formatDate(document.getElementById('appointmentDate').value)
+                };
+
+                // Salvar o agendamento no Supabase
+                const { error: supabaseError } = await supabaseClient
+                    .from('appointments')
+                    .insert([formData]);
+
+                if (supabaseError) throw supabaseError;
+
+                // Tentar enviar o e-mail de notificação
+                try {
+                    await sendEmailNotification(formData);
+                    alert('Agendamento realizado com sucesso! Você receberá uma confirmação por e-mail.');
+                } catch (emailError) {
+                    console.error('Erro ao enviar e-mail:', emailError);
+                    alert('Agendamento realizado! Porém, houve um problema ao enviar a confirmação por e-mail. Entre em contato conosco para confirmar.');
+                }
+                
+                e.target.reset();
+                generateTimeSlots();
+            } catch (error) {
+                console.error('Erro ao salvar agendamento:', error);
+                alert('Erro ao realizar o agendamento. Por favor, tente novamente.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Agendar';
+            }
+        }
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        woodDark: '#1a1a1a',
+                        woodGold: '#d4af37',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-woodDark text-white">
+    <!-- Menu Button for mobile -->
+    <button class="fixed top-4 right-4 z-50 p-2 bg-woodGold text-black rounded menu-button hidden md:hidden" onclick="toggleMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+    </button>
+
+    <!-- Menu Lateral -->
+    <div class="fixed top-0 right-0 h-screen w-full md:w-64 bg-black bg-opacity-90 p-5 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+        <div class="flex flex-col h-full">
+            <nav class="space-y-8 text-woodGold">
+                <a href="javascript:document.getElementById('home').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Início</a>
+                <a href="javascript:document.getElementById('services').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Serviços</a>
+                <a href="javascript:document.getElementById('gallery').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Galeria</a>
+                <a href="javascript:document.getElementById('schedule').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Agendamento</a>
+                <a href="javascript:document.getElementById('contact').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Contato</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="w-full mx-auto md:mr-64">
+        <section id="home" class="h-screen flex items-center justify-center bg-woodDark">
+            <div class="text-center">
+                <img src="/images/Logo1.jpg" alt="Wood Barbearia Logo" class="mx-auto w-64 mb-8">
+                <h1 class="text-4xl font-bold text-woodGold mb-4">Wood Barbearia</h1>
+                <p class="text-xl">Estilo e Tradição em cada corte</p>
+            </div>
+        </section>
+        <section id="services">
+            <!-- Services Section Content -->
+        </section>
+        <section id="gallery" class="py-16 px-8 bg-woodDark">
+            <h2 class="text-3xl font-bold text-center text-woodGold mb-8">Nossa Galeria</h2>
+            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+                <div class="overflow-hidden rounded-lg shadow-lg">
+                    <img src="/images/Gallery1.jpg" alt="Interior da Barbearia" class="w-full h-64 object-cover hover:scale-105 transition duration-300">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg">
+                    <img src="/images/Gallery2.jpg" alt="Cadeira de Barbeiro" class="w-full h-64 object-cover hover:scale-105 transition duration-300">
+                </div>
+                <div class="overflow-hidden rounded-lg shadow-lg">
+                    <img src="/images/Gallery3.jpg" alt="Fachada da Barbearia" class="w-full h-64 object-cover hover:scale-105 transition duration-300">
+                </div>
+            </div>
+        </section>
+        <section id="schedule" class="py-16 px-8 bg-black bg-opacity-80">
+            <h2 class="text-3xl font-bold text-center text-woodGold mb-8">Agendamento</h2>
+            <form id="appointmentForm" class="max-w-lg mx-auto space-y-6 px-4">
+                <div>
+                    <label class="block mb-2">Nome Completo</label>
+                    <input type="text" required class="w-full p-2 bg-gray-800 rounded text-white">
+                </div>
+                <div>
+                    <label class="block mb-2">WhatsApp</label>
+                    <input type="tel" required class="w-full p-2 bg-gray-800 rounded text-white">
+                </div>
+                <div>
+                    <label class="block mb-2">Serviço</label>
+                    <select required class="w-full p-2 bg-gray-800 rounded text-white" id="service">
+                        <option value="">Selecione um serviço</option>
+                        <option value="corte">Corte - R$ 35,00</option>
+                        <option value="barba">Barba - R$ 25,00</option>
+                        <option value="pezinho">Pezinho - R$ 10,00</option>
+                        <option value="sobrancelha">Sobrancelha - R$ 10,00</option>
+                        <option value="corte_barba">Corte + Barba - R$ 55,00</option>
+                        <option value="corte_hidratacao">Corte + Hidratação - R$ 45,00</option>
+                        <option value="pintura">Pintura - R$ 35,00</option>
+                        <option value="progressiva">Progressiva - A partir de R$ 70,00</option>
+                        <option value="platinado">Platinado - A partir de R$ 160,00</option>
+                        <option value="luzes">Luzes - R$ 70,00</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-2">Data</label>
+                    <input type="date" required class="w-full p-2 bg-gray-800 rounded text-white" id="appointmentDate">
+                </div>
+                <div>
+                    <label class="block mb-2">Horário</label>
+                    <select required class="w-full p-2 bg-gray-800 rounded text-white" id="timeSlots">
+                        <option value="">Selecione uma data primeiro</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-woodGold text-black py-2 rounded bg-yellow-600 transition">
+                    Agendar
+                </button>
+            </form>
+        </section>
+        <section id="contact" class="py-16 px-8 bg-black bg-opacity-80">
+            <h2 class="text-3xl font-bold text-center text-woodGold mb-8">Contato</h2>
+            <div class="max-w-2xl mx-auto">
+                <div class="space-y-4 text-center">
+                    <p class="text-white">Rua Pinto Alves, 596 - Vila Santa Cecília</p>
+                    <p class="text-white">Lagoa Santa/MG - CEP: 33230-222</p>
+                    <p class="text-white">Telefone: (31) 99298-4248</p>
+                    <div class="mt-8">
+                        <h3 class="text-xl font-bold mb-4 text-woodGold">Horário de Funcionamento</h3>
+                        <p class="text-white">Segunda a Sexta: 08:00 - 19:00</p>
+                        <p class="text-white">Sábado: 08:30 - 17:00</p>
+                        <p class="text-white">Domingo: Fechado</p>
+                    </div>
+	    		<div class="mt-4">
+                    <h3 class="text-xl font-bold mb-2">Avalie nosso serviço:</h3>
+                    <a href="https://g.co/kgs/cQh4N9b" target="_blank" class="text-woodGold hover:underline">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                </div>
+                <div class="mt-2">
+                    <h3 class="text-xl font-bold mb-2">Siga-nos:</h3>
+                    <a href="https://www.instagram.com/woodbarbearials?igsh=bnd1YTBlOGlnNXJk" target="_blank" class="text-woodGold hover:underline">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                </div>
+            </div>
+	    </div>
+            <div class="mt-8 text-center">
+                <button onclick="login()" class="bg-woodGold text-black px-6 py-2 rounded hover:bg-yellow-600 transition">
+                    Ver Agenda de Agendamentos
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Toggle menu function
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        // Supabase client initialization
+        const supabaseClient = supabase.createClient(
+            'https://tymvycpohivlgkfmbyar.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5bXZ5Y3BvaGl2bGdrZm1ieWFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjE5MjgsImV4cCI6MjA1MTMzNzkyOH0.0JyBz6RVJvvx15BMQ65jmmyVd1wc5RnNPCQijZztjjc'
+        );
+
+
+        async function generateTimeSlots() {
+            const select = document.getElementById('timeSlots');
+            const dateInput = document.getElementById('appointmentDate');
+
+            // Verifica se uma data foi selecionada
+            if (!dateInput.value) {
+                select.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+                return;
+            }
+
+            const selectedDate = new Date(dateInput.value + 'T00:00:00'); // Adiciona o horário para evitar problemas de fuso horário
+            const dayOfWeek = selectedDate.getDay(); // Usa getDay() para o fuso horário local
+            const dateString = dateInput.value; // Formato YYYY-MM-DD
+
+            // Reset das opções do select
+            select.innerHTML = '<option value="">Carregando horários...</option>';
+
+                // Verifica se é domingo e se a data é válida
+            if (dayOfWeek === 0) {
+                select.innerHTML = '<option value="">Não atendemos aos domingos</option>';
+                return;
+            }
+
+            try {
+                // Consulta ao Supabase para obter os horários agendados
+                const { data: bookedAppointments, error } = await supabaseClient
+                    .from('appointments')
+                    .select('time')
+                    .eq('date', dateString);
+
+                if (error) throw error;
+
+                // Extrai os horários já agendados
+                const bookedTimes = bookedAppointments ? bookedAppointments.map(app => app.time) : [];
+                let timeSlots = [];
+
+                // Gera os horários disponíveis com base no dia da semana
+                if (dayOfWeek === 6) { // Sábado
+                    let time = new Date(selectedDate);
+                    time.setHours(8, 30, 0); // Início às 8:30 (horário local)
+                    const endTime = new Date(selectedDate);
+                    endTime.setHours(17, 0, 0); // Fim às 17:00 (horário local)
+
+                    while (time < endTime) {
+                        const timeString = time.toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        });
+
+                        // Verifica se o horário já está agendado
+                        if (!bookedTimes.includes(timeString)) {
+                            timeSlots.push(timeString);
+                        }
+
+                        time.setMinutes(time.getMinutes() + 40); // Intervalo de 40 minutos
+                    }
+                } else { // Segunda a Sexta
+                    let time = new Date(selectedDate);
+                    time.setHours(8, 0, 0); // Início às 8:00 (horário local)
+                    const endTime = new Date(selectedDate);
+                    endTime.setHours(19, 0, 0); // Fim às 19:00 (horário local)
+
+                    while (time < endTime) {
+                        const timeString = time.toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        });
+
+                        // Verifica se o horário já está agendado
+                        if (!bookedTimes.includes(timeString)) {
+                            timeSlots.push(timeString);
+                        }
+
+                        time.setMinutes(time.getMinutes() + 40); // Intervalo de 40 minutos
+                    }
+                }
+
+                // Atualiza o select com os horários disponíveis
+                select.innerHTML = '<option value="">Selecione um horário</option>';
+                timeSlots.forEach(timeSlot => {
+                    const option = document.createElement('option');
+                    option.value = timeSlot;
+                    option.textContent = timeSlot;
+                    select.appendChild(option);
+                });
+
+                if (timeSlots.length === 0) {
+                    select.innerHTML = '<option value="">Não há horários disponíveis nesta data</option>';
+                }
+
+            } catch (error) {
+                console.error('Erro ao gerar horários:', error);
+                select.innerHTML = '<option value="">Erro ao carregar horários</option>';
+            }
+        }
+
+        function login() {
+            const loginModalHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="loginModal">
+                    <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
+                        <h2 class="text-xl font-bold text-woodGold mb-6">Login</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Nome de Usuário</label>
+                                <input type="text" id="username" class="w-full p-2 bg-gray-800 rounded text-white">
+                            </div>
+                            <div>
+                                <label class="block mb-2">Senha</label>
+                                <input type="password" id="password" class="w-full p-2 bg-gray-800 rounded text-white">
+                            </div>
+                            <button onclick="validateLogin()" class="w-full bg-woodGold text-black py-2 rounded hover:bg-yellow-600 transition">
+                                Entrar
+                            </button>
+                            <button onclick="document.getElementById('loginModal').remove()" class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-2">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', loginModalHTML);
+        }
+
+        async function validateLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === "admin" && password === "WoodBK@") {
+                document.getElementById('loginModal').remove();
+                await viewAppointments();
+            } else {
+                alert("Credenciais inválidas. Tente novamente.");
+            }
+        }
+
+
+        function formatDate(dateString) {
+            // Cria uma nova data sem considerar o fuso horário
+            const date = new Date(dateString + 'T00:00:00'); // Adiciona horário para evitar problemas de fuso horário
+            const day = date.getDate().toString().padStart(2, '0'); // Dia no formato DD
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês no formato MM
+            const year = date.getFullYear(); // Ano no formato YYYY
+            return `${day}/${month}/${year}`; // Retorna a data no formato DD/MM/YYYY
+        }
+
+        async function viewAppointments() {
+            try {
+                const { data: appointments, error } = await supabaseClient
+                    .from('appointments')
+                    .select('*')
+                    .order('date', { ascending: true })
+                    .order('time', { ascending: true });
+
+                if (error) throw error;
+
+                const modalHTML = `
+                    <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="appointmentsModal">
+                        <div class="bg-woodDark p-4 sm:p-8 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-xl sm:text-2xl font-bold text-woodGold">Agenda de Appointments</h2>
+                                <div class="text-sm text-gray-400">
+                                    Total: ${appointments.length} agendamentos
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4 flex flex-wrap gap-4">
+                                <input type="text" 
+                                       id="searchAppointments" 
+                                       placeholder="Buscar por nome ou serviço" 
+                                       class="p-2 bg-gray-800 rounded text-white flex-grow">
+                                <input type="date" 
+                                       id="filterDate" 
+                                       class="p-2 bg-gray-800 rounded text-white">
+                                <button onclick="applyFilters()" 
+                                        class="bg-woodGold text-black px-4 py-2 rounded hover:bg-yellow-600 transition">
+                                    Buscar
+                                </button>
+                                <button onclick="clearFilters()" 
+                                        class="bg-woodGold text-black px-4 py-2 rounded hover:bg-yellow-600 transition">
+                                    Limpar Filtros
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4" id="appointmentsList">
+                                ${appointments.map(appointment => `
+                                    <div class="border-b border-gray-700 pb-2">
+                                        <p class="font-bold text-white">${appointment.formatted_date} - ${appointment.time} - ${appointment.name}</p>
+                                        <p class="text-sm text-gray-400">Serviço: ${appointment.service_text}</p>
+                                        <p class="text-sm text-gray-400">Contato: ${appointment.whatsapp}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <div class="mt-6 flex justify-between">
+                                <button onclick="exportAppointments()" 
+                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                    Exportar para Excel
+                                </button>
+                                <button onclick="document.getElementById('appointmentsModal').remove()" 
+                                        class="bg-woodGold text-black px-4 py-2 rounded hover:bg-yellow-600 transition">
+                                    Fechar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            } catch (error) {
+                console.error('Erro ao buscar agendamentos:', error);
+                alert('Erro ao carregar agendamentos. Por favor, tente novamente.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('appointmentDate');
+            if (dateInput) {
+                // Set minimum date as today
+                const today = new Date();
+                dateInput.min = today.toISOString().split('T')[0];
+                
+                // Add event listener for date changes
+                dateInput.addEventListener('change', generateTimeSlots);
+            }
+            
+            const appointmentForm = document.getElementById('appointmentForm');
+            if (appointmentForm) {
+                appointmentForm.addEventListener('submit', handleFormSubmit);
+            }
+            
+            const whatsappInput = document.querySelector('input[type="tel"]');
+            if (whatsappInput) {
+                whatsappInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    if (value.length > 2) {
+                        value = `(${value.slice(0,2)}) ${value.slice(2)}`;
+                    }
+                    if (value.length > 10) {
+                        value = `${value.slice(0,10)}-${value.slice(10)}`;
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
+        });
+
+        function applyFilters() {
+            // TO DO: implement apply filters functionality
+        }
+
+        function clearFilters() {
+            // TO DO: implement clear filters functionality
+        }
+
+        function exportAppointments() {
+            // TO DO: implement export appointments functionality
+        }
+    </script>
+</body>
+</html>
