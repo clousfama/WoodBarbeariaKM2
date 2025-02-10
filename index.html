@@ -246,7 +246,7 @@
                     <p class="text-white">Telefone: (31) 99298-4248</p>
                     <div class="mt-8">
                         <h3 class="text-xl font-bold mb-4 text-woodGold">Horário de Funcionamento</h3>
-                        <p class="text-white">Segunda a Sexta: 08:00 - 19:00</p>
+                        <p class="text-white">Segunda a Sexta: 08:30 - 19:00</p>
                         <p class="text-white">Sábado: 08:30 - 17:00</p>
                         <p class="text-white">Domingo: Fechado</p>
                     </div>
@@ -341,11 +341,11 @@
                             timeSlots.push(timeString);
                         }
 
-                        time.setMinutes(time.getMinutes() + 40); // Intervalo de 40 minutos
+                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 40 minutos
                     }
                 } else { // Segunda a Sexta
                     let time = new Date(selectedDate);
-                    time.setHours(8, 0, 0); // Início às 8:00 (horário local)
+                    time.setHours(8, 30, 0); // Início às 8:00 (horário local)
                     const endTime = new Date(selectedDate);
                     endTime.setHours(19, 0, 0); // Fim às 19:00 (horário local)
 
@@ -361,7 +361,7 @@
                             timeSlots.push(timeString);
                         }
 
-                        time.setMinutes(time.getMinutes() + 40); // Intervalo de 40 minutos
+                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 40 minutos
                     }
                 }
 
