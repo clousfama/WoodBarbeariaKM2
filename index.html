@@ -329,7 +329,7 @@
                     const endTime = new Date(selectedDate);
                     endTime.setHours(17, 0, 0); // Fim às 17:00 (horário local)
 
-                    while (time < endTime) {
+                    while (time <= endTime) {
                         const timeString = time.toLocaleTimeString('pt-BR', {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -341,15 +341,15 @@
                             timeSlots.push(timeString);
                         }
 
-                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 40 minutos
+                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 30 minutos
                     }
                 } else { // Segunda a Sexta
                     let time = new Date(selectedDate);
-                    time.setHours(8, 30, 0); // Início às 8:00 (horário local)
+                    time.setHours(8, 30, 0); // Início às 8:30 (horário local)
                     const endTime = new Date(selectedDate);
                     endTime.setHours(19, 0, 0); // Fim às 19:00 (horário local)
 
-                    while (time < endTime) {
+                    while (time <= endTime) {
                         const timeString = time.toLocaleTimeString('pt-BR', {
                             hour: '2-digit',
                             minute: '2-digit',
@@ -361,7 +361,7 @@
                             timeSlots.push(timeString);
                         }
 
-                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 40 minutos
+                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 30 minutos
                     }
                 }
 
