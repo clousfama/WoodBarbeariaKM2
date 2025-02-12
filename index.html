@@ -13,12 +13,45 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
+        /* Menu styles */
+        .menu-button {
+            display: none;
+            z-index: 1000;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        
         @media (max-width: 767px) {
-            #sidebar {
-                z-index: 40;
-            }
             .menu-button {
                 display: block;
+            }
+            
+            #sidebar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                z-index: 999;
+                background-color: rgba(0, 0, 0, 0.95);
+            }
+            
+            #sidebar.translate-x-full {
+                transform: translateX(100%);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            #sidebar {
+                transform: translateX(0) !important;
+            }
+            
+            #sidebar.translate-x-full {
+                transform: translateX(0) !important;
             }
         }
     </style>
@@ -150,14 +183,14 @@
 </head>
 <body class="bg-woodDark text-white">
     <!-- Menu Button for mobile -->
-    <button class="fixed top-4 right-4 z-50 p-2 bg-woodGold text-black rounded menu-button hidden md:hidden" onclick="toggleMenu()">
+    <button class="menu-button fixed top-4 right-4 bg-woodGold text-black rounded p-2 shadow-lg hover:bg-yellow-600 transition-colors" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
         </svg>
     </button>
 
     <!-- Menu Lateral -->
-    <div class="fixed top-0 right-0 h-screen w-full md:w-64 bg-black bg-opacity-90 p-5 transform translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+    <div class="fixed top-0 right-0 h-screen w-full md:w-64 bg-black bg-opacity-95 p-5 transform translate-x-full transition-transform duration-300 ease-in-out z-50" id="sidebar">
         <div class="flex flex-col h-full">
             <nav class="space-y-8 text-woodGold">
                 <a href="javascript:document.getElementById('home').scrollIntoView({behavior: 'smooth'})" class="block hover:text-white transition">Início</a>
@@ -274,11 +307,48 @@
     </main>
 
     <script>
-        // Toggle menu function
-        function toggleMenu() {
+        // Initialize menu state
+        document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('translate-x-full');
+            const menuButton = document.querySelector('.menu-button');
+            
+            // Ensure menu starts closed on mobile
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('translate-x-full');
+                menuButton.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Toggle menu function
+        function toggleMenu(event) {
+            event.stopPropagation(); // Prevent event from bubbling up
+            const sidebar = document.getElementById('sidebar');
+            const menuButton = document.querySelector('.menu-button');
+            
+            if (sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.remove('translate-x-full');
+                menuButton.setAttribute('aria-expanded', 'true');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                menuButton.setAttribute('aria-expanded', 'false');
+            }
         }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuButton = document.querySelector('.menu-button');
+            
+            if (!sidebar.contains(event.target) && !menuButton.contains(event.target) && !sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.add('translate-x-full');
+                menuButton.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Prevent clicks inside menu from closing it
+        document.getElementById('sidebar').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
 
         // Supabase client initialization
         const supabaseClient = supabase.createClient(
