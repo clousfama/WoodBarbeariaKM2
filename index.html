@@ -115,6 +115,7 @@
                 console.log('Email enviado com sucesso:', response);
                 return true;
             } catch (error) {
+                alert('Erro ao buscar agendamentos:', error);
                 console.error('Erro detalhado no envio de email:', {
                     error: error.message,
                     templateParams,
@@ -122,6 +123,22 @@
                 });
                 throw error;
             }
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar');
+                const menuButton = document.querySelector('.menu-button');
+                
+                if (!sidebar.contains(event.target) && !menuButton.contains(event.target) && !sidebar.classList.contains('translate-x-full')) {
+                    sidebar.classList.add('translate-x-full');
+                    menuButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Prevent clicks inside menu from closing it
+            document.getElementById('sidebar').addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
         }
 
         async function handleFormSubmit(e) {
@@ -319,7 +336,7 @@
             }
         });
 
-        // Toggle menu function
+        // Toggle menu function with close button
         function toggleMenu(event) {
             event.stopPropagation(); // Prevent event from bubbling up
             const sidebar = document.getElementById('sidebar');
@@ -465,6 +482,11 @@
                                 <label class="block mb-2">Nome de Usuário</label>
                                 <input type="text" id="username" class="w-full p-2 bg-gray-800 rounded text-white">
                             </div>
+    <button class="close-button" onclick="toggleMenu()" aria-label="Fechar Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
                             <div>
                                 <label class="block mb-2">Senha</label>
                                 <input type="password" id="password" class="w-full p-2 bg-gray-800 rounded text-white">
@@ -870,4 +892,3 @@ function formatDate(dateString) {
     </script>
 </body>
 </html>
-
