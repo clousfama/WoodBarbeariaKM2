@@ -115,7 +115,6 @@
                 console.log('Email enviado com sucesso:', response);
                 return true;
             } catch (error) {
-                alert('Erro ao buscar agendamentos:', error);
                 console.error('Erro detalhado no envio de email:', {
                     error: error.message,
                     templateParams,
@@ -123,22 +122,6 @@
                 });
                 throw error;
             }
-            
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                const sidebar = document.getElementById('sidebar');
-                const menuButton = document.querySelector('.menu-button');
-                
-                if (!sidebar.contains(event.target) && !menuButton.contains(event.target) && !sidebar.classList.contains('translate-x-full')) {
-                    sidebar.classList.add('translate-x-full');
-                    menuButton.setAttribute('aria-expanded', 'false');
-                }
-            });
-
-            // Prevent clicks inside menu from closing it
-            document.getElementById('sidebar').addEventListener('click', function(event) {
-                event.stopPropagation();
-            });
         }
 
         async function handleFormSubmit(e) {
@@ -286,6 +269,9 @@
                 <button type="submit" class="w-full bg-woodGold text-black py-2 rounded bg-yellow-600 transition">
                     Agendar
                 </button>
+<button type="button" onclick="showCancellationForm()" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition mt-4">
+    Cancelar Agendamento
+</button>
             </form>
         </section>
         <section id="contact" class="py-16 px-8 bg-black bg-opacity-80">
@@ -336,7 +322,7 @@
             }
         });
 
-        // Toggle menu function with close button
+        // Toggle menu function
         function toggleMenu(event) {
             event.stopPropagation(); // Prevent event from bubbling up
             const sidebar = document.getElementById('sidebar');
@@ -472,6 +458,37 @@
             }
         }
 
+// Toggle menu function
+function toggleMenu(event) {
+    event.stopPropagation(); // Prevent event from bubbling up
+    const sidebar = document.getElementById('sidebar');
+    const menuButton = document.querySelector('.menu-button');
+    
+    if (sidebar.classList.contains('translate-x-full')) {
+        sidebar.classList.remove('translate-x-full');
+        menuButton.setAttribute('aria-expanded', 'true');
+    } else {
+        sidebar.classList.add('translate-x-full');
+        menuButton.setAttribute('aria-expanded', 'false');
+    }
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const menuButton = document.querySelector('.menu-button');
+    
+    if (!sidebar.contains(event.target) && !menuButton.contains(event.target) && !sidebar.classList.contains('translate-x-full')) {
+        sidebar.classList.add('translate-x-full');
+        menuButton.setAttribute('aria-expanded', 'false');
+    }
+});
+
+// Prevent clicks inside menu from closing it
+document.getElementById('sidebar').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+
         function login() {
             const loginModalHTML = `
                 <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="loginModal">
@@ -482,11 +499,6 @@
                                 <label class="block mb-2">Nome de Usuário</label>
                                 <input type="text" id="username" class="w-full p-2 bg-gray-800 rounded text-white">
                             </div>
-    <button class="close-button" onclick="toggleMenu()" aria-label="Fechar Menu">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
                             <div>
                                 <label class="block mb-2">Senha</label>
                                 <input type="password" id="password" class="w-full p-2 bg-gray-800 rounded text-white">
@@ -892,3 +904,4 @@ function formatDate(dateString) {
     </script>
 </body>
 </html>
+
