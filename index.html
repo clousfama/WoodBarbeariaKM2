@@ -13,7 +13,6 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
-        /* Menu styles */
         .menu-button {
             display: none;
             z-index: 1000;
@@ -55,7 +54,7 @@
             }
         }
     </style>
-<script type="text/javascript">
+    <script type="text/javascript">
         (function(){
             emailjs.init({
                 publicKey: "0OZ38rVRoHX11_UCw",
@@ -75,22 +74,19 @@
                 service: appointmentData.service,
                 date: appointmentData.date,
                 time: appointmentData.time,
-                to_email: "kesleywd25@gmail.com", // Email correto do destinatário
-                reply_to: appointmentData.whatsapp + "@c.us" // Adicionando WhatsApp como reply-to
+                to_email: "kesleywd25@gmail.com",
+                reply_to: appointmentData.whatsapp + "@c.us"
             };
 
-            // Verifica se o EmailJS está inicializado
             if (!emailjs || !emailjs.send) {
                 throw new Error('EmailJS não foi carregado corretamente');
             }
 
-            // Verifica se as credenciais do serviço estão presentes
             if (!templateParams.to_email || !templateParams.reply_to) {
                 throw new Error('Parâmetros de email incompletos');
             }
 
             try {
-                // Envia o email com timeout de 40 segundos
                 console.log('Parâmetros do e-mail:', templateParams);
                 console.log('Service ID:', 'service_ha16nlq');
                 console.log('Template ID:', 'template_0k95b0o');
@@ -109,8 +105,6 @@
                         setTimeout(() => reject(new Error('Timeout ao enviar email')), 40000)
                     )
                 ]);
-
-                console.log('Resposta do EmailJS:', response);
 
                 console.log('Email enviado com sucesso:', response);
                 return true;
@@ -142,14 +136,12 @@
                     formatted_date: formatDate(document.getElementById('appointmentDate').value)
                 };
 
-                // Salvar o agendamento no Supabase
                 const { error: supabaseError } = await supabaseClient
                     .from('appointments')
                     .insert([formData]);
 
                 if (supabaseError) throw supabaseError;
 
-                // Tentar enviar o e-mail de notificação
                 try {
                     await sendEmailNotification(formData);
                     alert('Agendamento realizado com sucesso! Você receberá uma confirmação por e-mail.');
@@ -182,14 +174,12 @@
     </script>
 </head>
 <body class="bg-woodDark text-white">
-    <!-- Menu Button for mobile -->
     <button class="menu-button fixed top-4 right-4 bg-woodGold text-black rounded p-2 shadow-lg hover:bg-yellow-600 transition-colors" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
         </svg>
     </button>
 
-    <!-- Menu Lateral -->
     <div class="fixed top-0 right-0 h-screen w-full md:w-64 bg-black bg-opacity-95 p-5 transform translate-x-full transition-transform duration-300 ease-in-out z-50" id="sidebar">
         <div class="flex flex-col h-full">
             <nav class="space-y-8 text-woodGold">
@@ -203,7 +193,6 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <main class="w-full mx-auto md:mr-64">
         <section id="home" class="h-screen flex items-center justify-center bg-woodDark">
             <div class="text-center">
@@ -269,9 +258,9 @@
                 <button type="submit" class="w-full bg-woodGold text-black py-2 rounded bg-yellow-600 transition">
                     Agendar
                 </button>
-<button type="button" onclick="showCancellationForm()" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition mt-4">
-    Cancelar Agendamento
-</button>
+                <button type="button" onclick="showCancellationForm()" class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition mt-4">
+                    Cancelar Agendamento
+                </button>
             </form>
         </section>
         <section id="contact" class="py-16 px-8 bg-black bg-opacity-80">
@@ -287,20 +276,20 @@
                         <p class="text-white">Sábado: 08:30 - 17:00</p>
                         <p class="text-white">Domingo: Fechado</p>
                     </div>
-	    		<div class="mt-4">
-                    <h3 class="text-xl font-bold mb-2">Avalie nosso serviço:</h3>
-                    <a href="https://g.co/kgs/cQh4N9b" target="_blank" class="text-woodGold hover:underline">
-                        <i class="fab fa-google"></i> Google
-                    </a>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-bold mb-2">Siga-nos:</h3>
-                    <a href="https://www.instagram.com/woodbarbearials?igsh=bnd1YTBlOGlnNXJk" target="_blank" class="text-woodGold hover:underline">
-                        <i class="fab fa-instagram"></i> Instagram
-                    </a>
+                    <div class="mt-4">
+                        <h3 class="text-xl font-bold mb-2">Avalie nosso serviço:</h3>
+                        <a href="https://g.co/kgs/cQh4N9b" target="_blank" class="text-woodGold hover:underline">
+                            <i class="fab fa-google"></i> Google
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-bold mb-2">Siga-nos:</h3>
+                        <a href="https://www.instagram.com/woodbarbearials?igsh=bnd1YTBlOGlnNXJk" target="_blank" class="text-woodGold hover:underline">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </a>
+                    </div>
                 </div>
             </div>
-	    </div>
             <div class="mt-8 text-center">
                 <button onclick="login()" class="bg-woodGold text-black px-6 py-2 rounded hover:bg-yellow-600 transition">
                     Ver Agenda de Agendamentos
@@ -310,21 +299,18 @@
     </main>
 
     <script>
-        // Initialize menu state
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
             const menuButton = document.querySelector('.menu-button');
             
-            // Ensure menu starts closed on mobile
             if (window.innerWidth < 768) {
                 sidebar.classList.add('translate-x-full');
                 menuButton.setAttribute('aria-expanded', 'false');
             }
         });
 
-        // Toggle menu function
         function toggleMenu(event) {
-            event.stopPropagation(); // Prevent event from bubbling up
+            event.stopPropagation();
             const sidebar = document.getElementById('sidebar');
             const menuButton = document.querySelector('.menu-button');
             
@@ -337,7 +323,6 @@
             }
         }
 
-        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const menuButton = document.querySelector('.menu-button');
@@ -348,147 +333,115 @@
             }
         });
 
-        // Prevent clicks inside menu from closing it
         document.getElementById('sidebar').addEventListener('click', function(event) {
             event.stopPropagation();
         });
 
-        // Supabase client initialization
         const supabaseClient = supabase.createClient(
             'https://tymvycpohivlgkfmbyar.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5bXZ5Y3BvaGl2bGdrZm1ieWFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU3NjE5MjgsImV4cCI6MjA1MTMzNzkyOH0.0JyBz6RVJvvx15BMQ65jmmyVd1wc5RnNPCQijZztjjc'
         );
 
-
         async function generateTimeSlots() {
-            const select = document.getElementById('timeSlots');
-            const dateInput = document.getElementById('appointmentDate');
+    const select = document.getElementById('timeSlots');
+    const dateInput = document.getElementById('appointmentDate');
 
-            // Verifica se uma data foi selecionada
-            if (!dateInput.value) {
-                select.innerHTML = '<option value="">Selecione uma data primeiro</option>';
-                return;
-            }
+    if (!dateInput.value) {
+        select.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+        return;
+    }
 
-            const selectedDate = new Date(dateInput.value + 'T00:00:00'); // Adiciona o horário para evitar problemas de fuso horário
-            const dayOfWeek = selectedDate.getDay(); // Usa getDay() para o fuso horário local
-            const dateString = dateInput.value; // Formato YYYY-MM-DD
+    const selectedDate = new Date(dateInput.value + 'T00:00:00');
+    const dayOfWeek = selectedDate.getDay();
+    const dateString = dateInput.value;
 
-            // Reset das opções do select
-            select.innerHTML = '<option value="">Carregando horários...</option>';
+    select.innerHTML = '<option value="">Carregando horários...</option>';
 
-                // Verifica se é domingo e se a data é válida
-            if (dayOfWeek === 0) {
-                select.innerHTML = '<option value="">Não atendemos aos domingos</option>';
-                return;
-            }
+    if (dayOfWeek === 0) {
+        select.innerHTML = '<option value="">Não atendemos aos domingos</option>';
+        return;
+    }
 
-            try {
-                // Consulta ao Supabase para obter os horários agendados
-                const { data: bookedAppointments, error } = await supabaseClient
-                    .from('appointments')
-                    .select('time')
-                    .eq('date', dateString);
+    try {
+        const { data: bookedAppointments, error: appointmentError } = await supabaseClient
+            .from('appointments')
+            .select('time')
+            .eq('date', dateString);
+        if (appointmentError) throw appointmentError;
 
-                if (error) throw error;
+        const { data: blockedTimes, error: blockedError } = await supabaseClient
+            .from('blocked_times')
+            .select('start_time, end_time')
+            .eq('date', dateString);
+        if (blockedError) throw blockedError;
 
-                // Extrai os horários já agendados
-                const bookedTimes = bookedAppointments ? bookedAppointments.map(app => app.time) : [];
-                let timeSlots = [];
+        const bookedTimes = bookedAppointments ? bookedAppointments.map(app => app.time) : [];
+        const blockedRanges = blockedTimes ? blockedTimes.map(bt => ({ start: bt.start_time, end: bt.end_time })) : [];
 
-                // Gera os horários disponíveis com base no dia da semana
-                if (dayOfWeek === 6) { // Sábado
-                    let time = new Date(selectedDate);
-                    time.setHours(8, 30, 0); // Início às 8:30 (horário local)
-                    const endTime = new Date(selectedDate);
-                    endTime.setHours(17, 0, 0); // Fim às 17:00 (horário local)
+        console.log('Horários agendados:', bookedTimes);
+        console.log('Intervalos bloqueados:', blockedRanges);
 
-                    while (time <= endTime) {
-                        const timeString = time.toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false
-                        });
+        let timeSlots = [];
 
-                        // Verifica se o horário já está agendado
-                        if (!bookedTimes.includes(timeString)) {
-                            timeSlots.push(timeString);
-                        }
+        const isSaturday = dayOfWeek === 6;
+        let time = new Date(selectedDate);
+        time.setHours(isSaturday ? 8 : 8, 30, 0);
+        const endTime = new Date(selectedDate);
+        endTime.setHours(isSaturday ? 17 : 19, 0, 0);
 
-                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 30 minutos
+        while (time <= endTime) {
+            const timeString = time.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+
+            let isBlocked = bookedTimes.includes(timeString);
+            for (const range of blockedRanges) {
+                console.log(`Verificando range: start=${range.start}, end=${range.end}, timeString=${timeString}`);
+                if (range.end) { // Usar range.end em vez de range.end_time
+                    console.log(`Condição de intervalo: ${timeString} >= ${range.start} && ${timeString} <= ${range.end}`);
+                    if (timeString >= range.start && timeString <= range.end) {
+                        isBlocked = true;
+                        console.log(`Horário ${timeString} bloqueado pelo intervalo ${range.start} - ${range.end}`);
+                        break;
                     }
-                } else { // Segunda a Sexta
-                    let time = new Date(selectedDate);
-                    time.setHours(8, 30, 0); // Início às 8:30 (horário local)
-                    const endTime = new Date(selectedDate);
-                    endTime.setHours(19, 0, 0); // Fim às 19:00 (horário local)
-
-                    while (time <= endTime) {
-                        const timeString = time.toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: false
-                        });
-
-                        // Verifica se o horário já está agendado
-                        if (!bookedTimes.includes(timeString)) {
-                            timeSlots.push(timeString);
-                        }
-
-                        time.setMinutes(time.getMinutes() + 30); // Intervalo de 30 minutos
+                } else {
+                    console.log(`Condição de horário único: ${timeString} === ${range.start}`);
+                    if (timeString === range.start) {
+                        isBlocked = true;
+                        console.log(`Horário ${timeString} bloqueado pelo horário único ${range.start}`);
+                        break;
                     }
                 }
-
-                // Atualiza o select com os horários disponíveis
-                select.innerHTML = '<option value="">Selecione um horário</option>';
-                timeSlots.forEach(timeSlot => {
-                    const option = document.createElement('option');
-                    option.value = timeSlot;
-                    option.textContent = timeSlot;
-                    select.appendChild(option);
-                });
-
-                if (timeSlots.length === 0) {
-                    select.innerHTML = '<option value="">Não há horários disponíveis nesta data</option>';
-                }
-
-            } catch (error) {
-                console.error('Erro ao gerar horários:', error);
-                select.innerHTML = '<option value="">Erro ao carregar horários</option>';
             }
+
+            if (!isBlocked) {
+                timeSlots.push(timeString);
+            } else {
+                console.log(`Horário ${timeString} excluído da lista de disponíveis`);
+            }
+
+            time.setMinutes(time.getMinutes() + 30);
         }
 
-// Toggle menu function
-function toggleMenu(event) {
-    event.stopPropagation(); // Prevent event from bubbling up
-    const sidebar = document.getElementById('sidebar');
-    const menuButton = document.querySelector('.menu-button');
-    
-    if (sidebar.classList.contains('translate-x-full')) {
-        sidebar.classList.remove('translate-x-full');
-        menuButton.setAttribute('aria-expanded', 'true');
-    } else {
-        sidebar.classList.add('translate-x-full');
-        menuButton.setAttribute('aria-expanded', 'false');
-    }
+        select.innerHTML = '<option value="">Selecione um horário</option>';
+        timeSlots.forEach(timeSlot => {
+            const option = document.createElement('option');
+            option.value = timeSlot;
+            option.textContent = timeSlot;
+            select.appendChild(option);
+        });
+
+        if (timeSlots.length === 0) {
+            select.innerHTML = '<option value="">Não há horários disponíveis nesta data</option>';
+        }
+    } catch (error) {
+        console.error('Erro ao gerar horários:', error);
+        select.innerHTML = '<option value="">Erro ao carregar horários</option>';
+    }
 }
-
-// Close menu when clicking outside
-document.addEventListener('click', function(event) {
-    const sidebar = document.getElementById('sidebar');
-    const menuButton = document.querySelector('.menu-button');
-    
-    if (!sidebar.contains(event.target) && !menuButton.contains(event.target) && !sidebar.classList.contains('translate-x-full')) {
-        sidebar.classList.add('translate-x-full');
-        menuButton.setAttribute('aria-expanded', 'false');
-    }
-});
-
-// Prevent clicks inside menu from closing it
-document.getElementById('sidebar').addEventListener('click', function(event) {
-    event.stopPropagation();
-});
-
+        
         function login() {
             const loginModalHTML = `
                 <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="loginModal">
@@ -529,16 +482,6 @@ document.getElementById('sidebar').addEventListener('click', function(event) {
             }
         }
 
-
-        function formatDate(dateString) {
-            // Cria uma nova data sem considerar o fuso horário
-            const date = new Date(dateString + 'T00:00:00'); // Adiciona horário para evitar problemas de fuso horário
-            const day = date.getDate().toString().padStart(2, '0'); // Dia no formato DD
-            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Mês no formato MM
-            const year = date.getFullYear(); // Ano no formato YYYY
-            return `${day}/${month}/${year}`; // Retorna a data no formato DD/MM/YYYY
-        }
-
         async function viewAppointments() {
             try {
                 const { data: appointments, error } = await supabaseClient
@@ -553,7 +496,7 @@ document.getElementById('sidebar').addEventListener('click', function(event) {
                     <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="appointmentsModal">
                         <div class="bg-woodDark p-4 sm:p-8 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                             <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl sm:text-2xl font-bold text-woodGold">Agenda de Appointments</h2>
+                                <h2 class="text-xl sm:text-2xl font-bold text-woodGold">Agenda de Agendamentos</h2>
                                 <div class="text-sm text-gray-400">
                                     Total: ${appointments.length} agendamentos
                                 </div>
@@ -574,6 +517,10 @@ document.getElementById('sidebar').addEventListener('click', function(event) {
                                 <button onclick="clearFilters()" 
                                         class="bg-woodGold text-black px-4 py-2 rounded hover:bg-yellow-600 transition">
                                     Limpar Filtros
+                                </button>
+                                <button onclick="showBlockScheduleForm()" 
+                                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                    Bloquear Agenda
                                 </button>
                             </div>
                             
@@ -608,14 +555,237 @@ document.getElementById('sidebar').addEventListener('click', function(event) {
             }
         }
 
+        async function showBlockScheduleForm() {
+            const modalHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="blockScheduleModal">
+                    <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
+                        <h2 class="text-xl font-bold text-woodGold mb-6">Bloquear Agenda</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Data</label>
+                                <input type="date" id="blockDate" class="w-full p-2 bg-gray-800 rounded text-white" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Tipo de Bloqueio</label>
+                                <select id="blockType" class="w-full p-2 bg-gray-800 rounded text-white" onchange="toggleTimeFields()">
+                                    <option value="full_day">Dia Inteiro</option>
+                                    <option value="time_range">Intervalo de Horários</option>
+                                </select>
+                            </div>
+                            <div id="timeRangeFields" class="hidden space-y-4">
+                                <div>
+                                    <label class="block mb-2">Horário de Início</label>
+                                    <select id="blockStartTime" class="w-full p-2 bg-gray-800 rounded text-white" required>
+                                        <option value="">Selecione uma data primeiro</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-2">Horário de Término</label>
+                                    <select id="blockEndTime" class="w-full p-2 bg-gray-800 rounded text-white" required>
+                                        <option value="">Selecione uma data primeiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Motivo do Bloqueio (opcional)</label>
+                                <textarea id="blockReason" class="w-full p-2 bg-gray-800 rounded text-white" rows="3"></textarea>
+                            </div>
+                            <button onclick="blockSchedule()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+                                Bloquear Agenda
+                            </button>
+                            <button onclick="document.getElementById('blockScheduleModal').remove()" class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-2">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            const dateInput = document.getElementById('blockDate');
+            dateInput.addEventListener('change', loadAvailableTimesForBlocking);
+        }
+
+        function toggleTimeFields() {
+            const blockType = document.getElementById('blockType').value;
+            const timeRangeFields = document.getElementById('timeRangeFields');
+            if (blockType === 'time_range') {
+                timeRangeFields.classList.remove('hidden');
+            } else {
+                timeRangeFields.classList.add('hidden');
+            }
+        }
+
+        async function loadAvailableTimesForBlocking() {
+            const dateInput = document.getElementById('blockDate');
+            const startTimeSelect = document.getElementById('blockStartTime');
+            const endTimeSelect = document.getElementById('blockEndTime');
+            const selectedDate = new Date(dateInput.value + 'T00:00:00');
+            const dayOfWeek = selectedDate.getDay();
+            const dateString = dateInput.value;
+
+            if (!dateString) {
+                startTimeSelect.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+                endTimeSelect.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+                return;
+            }
+
+            if (dayOfWeek === 0) {
+                startTimeSelect.innerHTML = '<option value="">Não atendemos aos domingos</option>';
+                endTimeSelect.innerHTML = '<option value="">Não atendemos aos domingos</option>';
+                return;
+            }
+
+            try {
+                const { data: bookedAppointments, error: appointmentError } = await supabaseClient
+                    .from('appointments')
+                    .select('time')
+                    .eq('date', dateString);
+                if (appointmentError) throw appointmentError;
+
+                const { data: blockedTimes, error: blockedError } = await supabaseClient
+                    .from('blocked_times')
+                    .select('start_time, end_time')
+                    .eq('date', dateString);
+                if (blockedError) throw blockedError;
+
+                const bookedTimes = bookedAppointments ? bookedAppointments.map(app => app.time) : [];
+                const blockedRanges = blockedTimes ? blockedTimes.map(bt => ({ start: bt.start_time, end: bt.end_time })) : [];
+                let timeSlots = [];
+
+                const isSaturday = dayOfWeek === 6;
+                let time = new Date(selectedDate);
+                time.setHours(isSaturday ? 8 : 8, 30, 0);
+                const endTime = new Date(selectedDate);
+                endTime.setHours(isSaturday ? 17 : 19, 0, 0);
+
+                while (time <= endTime) {
+                    const timeString = time.toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+
+                    let isBlocked = bookedTimes.includes(timeString);
+                    for (const range of blockedRanges) {
+                        if (range.end_time) {
+                            if (timeString >= range.start && timeString <= range.end_time) {
+                                isBlocked = true;
+                                break;
+                            }
+                        } else if (timeString === range.start) {
+                            isBlocked = true;
+                            break;
+                        }
+                    }
+
+                    if (!isBlocked) {
+                        timeSlots.push(timeString);
+                    }
+
+                    time.setMinutes(time.getMinutes() + 30);
+                }
+
+                startTimeSelect.innerHTML = '<option value="">Selecione um horário</option>';
+                endTimeSelect.innerHTML = '<option value="">Selecione um horário</option>';
+                timeSlots.forEach(timeSlot => {
+                    const optionStart = document.createElement('option');
+                    optionStart.value = timeSlot;
+                    optionStart.textContent = timeSlot;
+                    startTimeSelect.appendChild(optionStart);
+
+                    const optionEnd = document.createElement('option');
+                    optionEnd.value = timeSlot;
+                    optionEnd.textContent = timeSlot;
+                    endTimeSelect.appendChild(optionEnd);
+                });
+
+                if (timeSlots.length === 0) {
+                    startTimeSelect.innerHTML = '<option value="">Todos os horários já estão ocupados ou bloqueados</option>';
+                    endTimeSelect.innerHTML = '<option value="">Todos os horários já estão ocupados ou bloqueados</option>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar horários para bloqueio:', error);
+                startTimeSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
+                endTimeSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
+            }
+        }
+
+        async function blockSchedule() {
+    const date = document.getElementById('blockDate').value;
+    const blockType = document.getElementById('blockType').value;
+    const startTimeElement = document.getElementById('blockStartTime');
+    const endTimeElement = document.getElementById('blockEndTime');
+    const startTime = blockType === 'time_range' ? startTimeElement.value : '08:30';
+    const endTime = blockType === 'time_range' ? endTimeElement.value : null;
+    const reason = document.getElementById('blockReason').value;
+
+    console.log('Valores brutos dos elementos:', {
+        date,
+        blockType,
+        startTime: startTimeElement ? startTimeElement.value : 'N/A',
+        endTime: endTimeElement ? endTimeElement.value : 'N/A',
+        reason
+    });
+
+    if (!date) {
+        alert('Por favor, selecione uma data.');
+        return;
+    }
+    if (blockType === 'time_range' && (!startTime || !endTime)) {
+        alert('Por favor, selecione horários de início e término para o intervalo.');
+        console.log('Validação falhou: startTime ou endTime estão vazios');
+        return;
+    }
+    if (blockType === 'time_range' && startTime >= endTime) {
+        alert('O horário de término deve ser posterior ao horário de início.');
+        return;
+    }
+
+    const blockData = { 
+        date, 
+        start_time: startTime, 
+        end_time: endTime, 
+        reason 
+    };
+    console.log('Dados a serem salvos no Supabase:', blockData);
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('blocked_times')
+            .insert([blockData])
+            .select();
+
+        if (error) throw error;
+
+        console.log('Dados salvos com sucesso:', data);
+        alert('Agenda bloqueada com sucesso!');
+        document.getElementById('blockScheduleModal').remove();
+        document.getElementById('appointmentsModal').remove();
+        await viewAppointments();
+        // Forçar atualização dos horários disponíveis
+        await generateTimeSlots();
+    } catch (error) {
+        console.error('Erro ao bloquear agenda:', error);
+        alert('Erro ao bloquear agenda. Por favor, tente novamente.');
+    }
+}
+
+
+        function formatDate(dateString) {
+            const date = new Date(dateString + 'T00:00:00');
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const dateInput = document.getElementById('appointmentDate');
             if (dateInput) {
-                // Set minimum date as today
                 const today = new Date();
                 dateInput.min = today.toISOString().split('T')[0];
-                
-                // Add event listener for date changes
                 dateInput.addEventListener('change', generateTimeSlots);
             }
             
@@ -653,255 +823,218 @@ document.getElementById('sidebar').addEventListener('click', function(event) {
         function exportAppointments() {
             // TO DO: implement export appointments functionality
         }
-   
-   async function showCancellationForm() {
-    const modalHTML = `
-        <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="cancellationModal">
-            <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
-                <h2 class="text-xl font-bold text-woodGold mb-6">Cancelar Agendamento</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block mb-2">Nome Completo</label>
-                        <input type="text" id="cancelName" class="w-full p-2 bg-gray-800 rounded text-white" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2">WhatsApp</label>
-                        <input type="tel" id="cancelWhatsapp" class="w-full p-2 bg-gray-800 rounded text-white" 
-                               placeholder="(31)99999-9999" maxlength="14" required>
-                    </div>
-                    <div>
-                        <label class="block mb-2">Data do Agendamento</label>
-                        <input type="date" id="cancelDate" class="w-full p-2 bg-gray-800 rounded text-white" required onchange="loadAvailableAppointments()">
-                    </div>
-                    <div>
-                        <label class="block mb-2">Horário do Agendamento</label>
-                        <select id="cancelTime" class="w-full p-2 bg-gray-800 rounded text-white" required>
-                            <option value="">Selecione uma data primeiro</option>
-                        </select>
-                    </div>
-                    <button onclick="searchAppointment()" class="w-full bg-woodGold text-black py-2 rounded hover:bg-yellow-600 transition">
-                        Buscar Agendamento
-                    </button>
-                    <button onclick="document.getElementById('cancellationModal').remove()" class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-2">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
 
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-     const whatsappInput = document.getElementById('cancelWhatsapp');
-     whatsappInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        
-        if (value.length > 11) {
-            value = value.slice(0, 11);
-        }
-        
-        let formattedValue = '';
-        if (value.length > 0) {
-            formattedValue = '(' + value.slice(0, 2);
-            
-            if (value.length > 2) {
-                formattedValue += ')' + value.slice(2, 7);
-                
-                if (value.length > 7) {
-                    formattedValue += '-' + value.slice(7, 11);
-                }
-            }
-        }
-        
-        e.target.value = formattedValue;
-    });
-}
-
-async function loadAvailableAppointments() {
- const dateInput = document.getElementById('cancelDate');
-    const timeSelect = document.getElementById('cancelTime');
-    const selectedDate = dateInput.value;
-
-    if (!selectedDate) {
-        timeSelect.innerHTML = '<option value="">Selecione uma data primeiro</option>';
-        return;
-    }
-
-    try {
-        const { data: appointments, error } = await supabaseClient
-            .from('appointments')
-            .select('time')
-            .eq('date', selectedDate)
-            .order('time');
-
-        if (error) throw error;
-
-        console.log('Agendamentos carregados:', appointments);
-
-        timeSelect.innerHTML = '<option value="">Selecione um horário</option>';
-        
-        if (appointments && appointments.length > 0) {
-            appointments.forEach(app => {
-                const option = document.createElement('option');
-                option.value = app.time;
-                option.textContent = app.time;
-                timeSelect.appendChild(option);
-            });
-        } else {
-            timeSelect.innerHTML = '<option value="">Nenhum agendamento nesta data</option>';
-        }
-
-    } catch (error) {
-        console.error('Erro ao carregar horários:', error);
-        timeSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
-    }
-}
-function generateTimeOptions() {
-    const timeSlots = [];
-    let time = new Date();
-    time.setHours(8, 30, 0); // Começa às 8:30
-    const endTime = new Date();
-    endTime.setHours(19, 0, 0); // Termina às 19:00
-
-    while (time <= endTime) {
-        const timeString = time.toLocaleTimeString('pt-BR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-        timeSlots.push(`<option value="${timeString}">${timeString}</option>`);
-        time.setMinutes(time.getMinutes() + 30); // Intervalos de 30 minutos
-    }
-
-    return timeSlots.join('');
-}
-
-async function searchAppointment() {
-    
-    const name = document.getElementById('cancelName').value.trim();   
-    const date = document.getElementById('cancelDate').value;
-    
-
-   if (!name || !date) {
-        alert('Por favor, preencha o nome e a data.');
-        return;
-    }
-
-    try {
-        const { data: appointments, error } = await supabaseClient
-            .from('appointments')
-            .select('*')
-            .eq('date', date)
-            .ilike('name', `%${name}%`)
-            .order('time');
-
-        if (error) throw error;
-
-        if (!appointments || appointments.length === 0) {
-            alert('Nenhum agendamento encontrado para esta data e nome.');
-            return;
-        }
-
-        // Remover modal anterior se existir
-        const oldModal = document.getElementById('cancellationModal');
-        if (oldModal) {
-            oldModal.remove();
-        }
-
-        showAppointmentsList(appointments);
-    } catch (error) {
-        console.error('Erro ao buscar agendamentos:', error);
-        alert('Erro ao buscar agendamentos. Por favor, tente novamente.');
-    }
-}
-
-function showAppointmentsList(appointments) {
-    // Remover modal anterior se existir
-    const oldModal = document.getElementById('appointmentListModal');
-    if (oldModal) {
-        oldModal.remove();
-    }
-
-    const listHTML = `
-        <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="appointmentListModal">
-            <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
-                <h2 class="text-xl font-bold text-woodGold mb-6">Agendamentos Encontrados</h2>
-                <div class="space-y-4">
-                    ${appointments.map((app, index) => `
-                        <div class="border-b border-gray-600 pb-4 mb-4">
-                            <p class="text-white font-bold">Agendamento #${index + 1}</p>
-                            <p class="text-white">Cliente: ${app.name}</p>
-                            <p class="text-white">Data: ${app.formatted_date || app.date}</p>
-                            <p class="text-white">Horário: ${app.time}</p>
-                            <p class="text-white">Serviço: ${app.service_text}</p>
-                            <button 
-                                onclick="cancelAppointment('${app.id}')" 
-                                class="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition w-full">
-                                Cancelar Este Agendamento
+        async function showCancellationForm() {
+            const modalHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="cancellationModal">
+                    <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
+                        <h2 class="text-xl font-bold text-woodGold mb-6">Cancelar Agendamento</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block mb-2">Nome Completo</label>
+                                <input type="text" id="cancelName" class="w-full p-2 bg-gray-800 rounded text-white" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2">WhatsApp</label>
+                                <input type="tel" id="cancelWhatsapp" class="w-full p-2 bg-gray-800 rounded text-white" 
+                                       placeholder="(31)99999-9999" maxlength="14" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Data do Agendamento</label>
+                                <input type="date" id="cancelDate" class="w-full p-2 bg-gray-800 rounded text-white" required onchange="loadAvailableAppointments()">
+                            </div>
+                            <div>
+                                <label class="block mb-2">Horário do Agendamento</label>
+                                <select id="cancelTime" class="w-full p-2 bg-gray-800 rounded text-white" required>
+                                    <option value="">Selecione uma data primeiro</option>
+                                </select>
+                            </div>
+                            <button onclick="searchAppointment()" class="w-full bg-woodGold text-black py-2 rounded hover:bg-yellow-600 transition">
+                                Buscar Agendamento
+                            </button>
+                            <button onclick="document.getElementById('cancellationModal').remove()" class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-2">
+                                Cancelar
                             </button>
                         </div>
-                    `).join('')}
-                    <button 
-                        onclick="closeAppointmentModal()" 
-                        class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-4">
-                        Fechar
-                    </button>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
+            `;
 
-    document.body.insertAdjacentHTML('beforeend', listHTML);
-}
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-function closeAppointmentModal() {
-    const modal = document.getElementById('appointmentListModal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-async function cancelAppointment(id) {
-
-  if (!confirm('Tem certeza que deseja cancelar este agendamento?')) {
-        return;
-    }
-
-    try {
-        console.log('Tentando cancelar agendamento:', id);
-
-        const { data, error } = await supabaseClient
-            .rpc('cancel_appointment', { appointment_id: id });
-
-        console.log('Resposta completa da função RPC:', { data, error });
-
-        if (error) {
-            console.error('Erro detalhado:', JSON.stringify(error, null, 2));
-            throw error;
+            const whatsappInput = document.getElementById('cancelWhatsapp');
+            whatsappInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+                
+                let formattedValue = '';
+                if (value.length > 0) {
+                    formattedValue = '(' + value.slice(0, 2);
+                    
+                    if (value.length > 2) {
+                        formattedValue += ')' + value.slice(2, 7);
+                        
+                        if (value.length > 7) {
+                            formattedValue += '-' + value.slice(7, 11);
+                        }
+                    }
+                }
+                
+                e.target.value = formattedValue;
+            });
         }
 
-        if (data && data.success) {
-            alert('Agendamento cancelado com sucesso!');
-            window.location.reload();
-        } else {
-            alert('O agendamento não foi encontrado ou não pôde ser deletado');
-            console.error('Detalhes do erro:', JSON.stringify(data, null, 2));
+        async function loadAvailableAppointments() {
+            const dateInput = document.getElementById('cancelDate');
+            const timeSelect = document.getElementById('cancelTime');
+            const selectedDate = dateInput.value;
+
+            if (!selectedDate) {
+                timeSelect.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+                return;
+            }
+
+            try {
+                const { data: appointments, error } = await supabaseClient
+                    .from('appointments')
+                    .select('time')
+                    .eq('date', selectedDate)
+                    .order('time');
+
+                if (error) throw error;
+
+                timeSelect.innerHTML = '<option value="">Selecione um horário</option>';
+                
+                if (appointments && appointments.length > 0) {
+                    appointments.forEach(app => {
+                        const option = document.createElement('option');
+                        option.value = app.time;
+                        option.textContent = app.time;
+                        timeSelect.appendChild(option);
+                    });
+                } else {
+                    timeSelect.innerHTML = '<option value="">Nenhum agendamento nesta data</option>';
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar horários:', error);
+                timeSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
+            }
         }
 
-    } catch (error) {
-        console.error('Erro completo:', JSON.stringify(error, null, 2));
-        alert('Erro ao cancelar agendamento. Por favor, contate o suporte.');
-    }
-}
+        async function searchAppointment() {
+            const name = document.getElementById('cancelName').value.trim();   
+            const date = document.getElementById('cancelDate').value;
 
-// Função auxiliar para formatar a data
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-}
+            if (!name || !date) {
+                alert('Por favor, preencha o nome e a data.');
+                return;
+            }
 
+            try {
+                const { data: appointments, error } = await supabaseClient
+                    .from('appointments')
+                    .select('*')
+                    .eq('date', date)
+                    .ilike('name', `%${name}%`)
+                    .order('time');
 
+                if (error) throw error;
+
+                if (!appointments || appointments.length === 0) {
+                    alert('Nenhum agendamento encontrado para esta data e nome.');
+                    return;
+                }
+
+                const oldModal = document.getElementById('cancellationModal');
+                if (oldModal) {
+                    oldModal.remove();
+                }
+
+                showAppointmentsList(appointments);
+            } catch (error) {
+                console.error('Erro ao buscar agendamentos:', error);
+                alert('Erro ao buscar agendamentos. Por favor, tente novamente.');
+            }
+        }
+
+        function showAppointmentsList(appointments) {
+            const oldModal = document.getElementById('appointmentListModal');
+            if (oldModal) {
+                oldModal.remove();
+            }
+
+            const listHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" id="appointmentListModal">
+                    <div class="bg-woodDark p-8 rounded-lg w-full max-w-md">
+                        <h2 class="text-xl font-bold text-woodGold mb-6">Agendamentos Encontrados</h2>
+                        <div class="space-y-4">
+                            ${appointments.map((app, index) => `
+                                <div class="border-b border-gray-600 pb-4 mb-4">
+                                    <p class="text-white font-bold">Agendamento #${index + 1}</p>
+                                    <p class="text-white">Cliente: ${app.name}</p>
+                                    <p class="text-white">Data: ${app.formatted_date || app.date}</p>
+                                    <p class="text-white">Horário: ${app.time}</p>
+                                    <p class="text-white">Serviço: ${app.service_text}</p>
+                                    <button 
+                                        onclick="cancelAppointment('${app.id}')" 
+                                        class="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition w-full">
+                                        Cancelar Este Agendamento
+                                    </button>
+                                </div>
+                            `).join('')}
+                            <button 
+                                onclick="closeAppointmentModal()" 
+                                class="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition mt-4">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', listHTML);
+        }
+
+        function closeAppointmentModal() {
+            const modal = document.getElementById('appointmentListModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        async function cancelAppointment(id) {
+            if (!confirm('Tem certeza que deseja cancelar este agendamento?')) {
+                return;
+            }
+
+            try {
+                console.log('Tentando cancelar agendamento:', id);
+
+                const { data, error } = await supabaseClient
+                    .rpc('cancel_appointment', { appointment_id: id });
+
+                if (error) {
+                    console.error('Erro detalhado:', JSON.stringify(error, null, 2));
+                    throw error;
+                }
+
+                if (data && data.success) {
+                    alert('Agendamento cancelado com sucesso!');
+                    window.location.reload();
+                } else {
+                    alert('O agendamento não foi encontrado ou não pôde ser deletado');
+                    console.error('Detalhes do erro:', JSON.stringify(data, null, 2));
+                }
+
+            } catch (error) {
+                console.error('Erro completo:', JSON.stringify(error, null, 2));
+                alert('Erro ao cancelar agendamento. Por favor, contate o suporte.');
+            }
+        }
     </script>
 </body>
 </html>
-
